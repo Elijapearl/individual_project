@@ -1,5 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui';
 
 void main() {
   runApp(const MoodBoardApp());
@@ -17,7 +20,6 @@ class MoodBoardApp extends StatelessWidget {
   }
 }
 
-
 class FrontPage extends StatefulWidget {
   const FrontPage({super.key});
 
@@ -28,71 +30,88 @@ class FrontPage extends StatefulWidget {
 class _FrontPageState extends State<FrontPage> {
   final TextEditingController nameController = TextEditingController();
 
+  Future<void> saveName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userName', name);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'MoodBoard Tracker',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink,
-                ),
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                'Hello! What is your name?',
-                style: TextStyle(fontSize: 20, color: Colors.pink),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your name',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pinkAccent[700],
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-                onPressed: () {
-                  String name = nameController.text.trim();
-                  if (name.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DashboardPage(userName: name),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Get Started', style: TextStyle(fontSize: 20, color: Colors.white)),
-              )
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/bg.jpg',
+            fit: BoxFit.cover,
           ),
-        ),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(color: Colors.pink[50]?.withOpacity(0.3)),
+          ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'MoodBoard Tracker',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.pink,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Hello! What is your name?',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.pink),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter your name',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent[700],
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    ),
+                    onPressed: () async {
+                      String name = nameController.text.trim();
+                      if (name.isNotEmpty) {
+                        await saveName(name);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DashboardPage(),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Get Started', style: TextStyle(fontSize: 20, color: Colors.white)),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class DashboardPage extends StatefulWidget {
-  final String userName;
-  const DashboardPage({super.key, required this.userName});
+  const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -100,6 +119,20 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final List<Map<String, String>> savedMoods = [];
+  String userName = '';
+
+  Future<void> loadName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName') ?? '';
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +157,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Center(
               child: Text(
-                'Hi ${widget.userName}! Welcome to your MoodBoard Dashboard.',
+                'Hi $userName! Welcome to your MoodBoard Dashboard.',
                 style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.pink),
               ),
             ),
