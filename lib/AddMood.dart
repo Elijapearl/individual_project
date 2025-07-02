@@ -7,7 +7,6 @@ class MoodSelectionPage extends StatefulWidget {
   @override
   State<MoodSelectionPage> createState() => _MoodSelectionPageState();
 }
-
 class _MoodSelectionPageState extends State<MoodSelectionPage> {
   final List<String> moods = [
     'Happy', 'Sad', 'Angry', 'Tired', 'Confused', 'Annoyed', 'Awkward',
