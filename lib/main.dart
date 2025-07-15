@@ -10,6 +10,7 @@ void main() {
 class MoodBoardApp extends StatelessWidget {
   const MoodBoardApp({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

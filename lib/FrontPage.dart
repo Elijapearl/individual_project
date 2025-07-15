@@ -10,6 +10,7 @@ class FrontPage extends StatefulWidget {
   State<FrontPage> createState() => _FrontPageState();
 }
 
+
 class _FrontPageState extends State<FrontPage> {
   final TextEditingController nameController = TextEditingController();
   bool showError = false;

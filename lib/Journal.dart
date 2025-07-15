@@ -9,6 +9,7 @@ class JournalEntryPage extends StatefulWidget {
   State<JournalEntryPage> createState() => _JournalEntryPageState();
 }
 
+
 class _JournalEntryPageState extends State<JournalEntryPage> {
   final TextEditingController controller = TextEditingController();
 

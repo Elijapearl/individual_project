@@ -186,6 +186,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     MaterialPageRoute(builder: (context) => const MoodSelectionPage()),
                   );
 
+
                   if (result != null && result is Map<String, String>) {
                     setState(() {
                       savedMoods.add(result);
