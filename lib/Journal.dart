@@ -24,7 +24,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        automaticallyImplyLeading: true, // shows back arrow by default
+        automaticallyImplyLeading: true,
         title: const Text(
           'Mood Journal',
           style: TextStyle(
